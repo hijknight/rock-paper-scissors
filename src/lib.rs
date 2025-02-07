@@ -69,9 +69,9 @@
 //!    Provides utilities to collect and validate user input for moves in a console-based setup.
 //!
 //!    ```rust
-//!    use rock_paper_scissors::{PlayerMoves, MoveType, get_user_move};
+//!    use rock_paper_scissors::{PlayerMoves, MoveType};
 //!
-//!    let user_move = get_user_move();
+//!    let user_move = MoveType::from_user_input();
 //!    println!("You chose: {}", user_move.convert_to_string());
 //!    ```
 //!
@@ -80,7 +80,7 @@
 //! Below is an example of a simple game loop using the `rock-paper-scissors` library:
 //!
 //! ```rust
-//! use rock_paper_scissors::{PlayerMoves, Scores, Winner, get_user_move};
+//! use rock_paper_scissors::{ PlayerMoves, Scores, Winner };
 //!
 //! fn main() {
 //!     let mut scores = Scores::new();
@@ -113,6 +113,7 @@
 
 use rand::Rng;
 use std::io;
+use std::io::Write;
 
 /// # Winner enum
 ///
@@ -139,7 +140,6 @@ pub enum Winner {
 
 
 impl Winner {
-
     /// Converts a `Winner` to a human-readable `String`.
     ///
     /// # Examples
@@ -158,7 +158,6 @@ impl Winner {
         }
     }
 }
-
 
 /// # MoveType enum
 ///
@@ -221,7 +220,51 @@ impl MoveType {
         }
     }
 
+    /// # Gets the User's Move
+    ///
+    /// Handles user input from the console, validates it, and converts it into a `MoveType`.
+    ///
+    /// The user is prompted to enter a number corresponding to their move:
+    /// - `1` for `Rock`
+    /// - `2` for `Paper`
+    /// - `3` for `Scissors`
+    ///
+    /// The function will ensure valid input by repeatedly asking for input until a valid value is provided.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use rock_paper_scissors::MoveType;
+    ///
+    /// println!("Enter your move: (1 = Rock, 2 = Paper, 3 = Scissors)");
+    /// let user_move = MoveType::from_user_input();
+    ///
+    /// assert!(matches!(user_move, MoveType::Rock | MoveType::Paper | MoveType::Scissors));
+    /// ```
+    ///
+    /// # Behavior
+    ///
+    /// When the user provides invalid input (e.g., letters or numbers outside the valid range),
+    /// the function will re-prompt for valid input until it is received
+    pub fn from_user_input() -> MoveType {
+        loop {
+            print!("Enter your move: (1 = Rock, 2 = Paper, 3 = Scissors): ");
+            io::stdout().flush().unwrap(); // make sure it is printed before input is given
 
+            let mut user_move: String = String::new();
+            io::stdin()
+                .read_line(&mut user_move)
+                .expect("Failed to read line");
+
+            match user_move.trim().parse::<u8>() {
+                Ok(1) => return MoveType::Rock,
+                Ok(2) => return MoveType::Paper,
+                Ok(3) => return MoveType::Scissors,
+                Ok(_) => println!("Please enter a valid number between 1 and 3."),
+                _ => println!("Please enter a valid number."),
+            }
+        }
+    }
 }
 
 /// # PlayerMoves struct
@@ -271,7 +314,7 @@ impl PlayerMoves {
     /// ```
     pub fn new() -> PlayerMoves {
         PlayerMoves {
-            user_move: get_user_move(),
+            user_move: MoveType::from_user_input(),
             enemy_move: MoveType::random_move(),
         }
     }
@@ -321,8 +364,6 @@ pub struct Scores {
     pub user_wins: u8,
     pub enemy_wins: u8,
 }
-
-
 
 impl Scores {
     /// Creates a new `Scores` instance with zero scores.
@@ -386,77 +427,11 @@ impl Scores {
     /// assert_eq!(scores.enemy_wins, 0);
     /// ```
     #[allow(dead_code)]
-    fn reset(&mut self) {
+    pub fn reset(&mut self) {
         self.user_wins = 0;
         self.enemy_wins = 0;
     }
 }
-
-
-
-/// # Gets the User's Move
-///
-/// Handles user input from the console, validates it, and converts it into a `MoveType`.
-///
-/// The user is prompted to enter a number corresponding to their move:
-/// - `1` for `Rock`
-/// - `2` for `Paper`
-/// - `3` for `Scissors`
-///
-/// The function will ensure valid input by repeatedly asking for input until a valid value is provided.
-///
-/// # Examples
-///
-/// ```no_run
-/// use rock_paper_scissors::{get_user_move, MoveType};
-///
-/// println!("Enter your move: (1 = Rock, 2 = Paper, 3 = Scissors)");
-/// let user_move = get_user_move();
-///
-/// assert!(matches!(user_move, MoveType::Rock | MoveType::Paper | MoveType::Scissors));
-/// ```
-///
-/// # Behavior
-///
-/// When the user provides invalid input (e.g., letters or numbers outside the valid range),
-/// the function will re-prompt for valid input until it is received
-pub fn get_user_move() -> MoveType {
-    let mut user_move: String = String::new();
-
-    io::stdin()
-        .read_line(&mut user_move)
-        .expect("Failed to read line");
-
-    // get initial user input and parse into an integer,
-    // if this returns an Err, the while let below will run and retry handling user input.
-    let user_move: Result<u8, _> = user_move.trim().parse();
-
-    while let Err(_) = user_move { // makes sure unwrap cannot panic
-        println!("Please enter a valid number.");
-        get_user_move();
-    }
-
-    // We can use unwrap here because the while loop has already run, so we know this won't panic
-    let user_move = user_move.unwrap();
-
-    // finally, after checking   that the value is Ok(u8) and between 1 and 3, we can return the user move statement.
-    match user_move {
-        1..=3 => {
-            match user_move {
-                1 => MoveType::Rock,
-                2 => MoveType::Paper,
-                _ => MoveType::Scissors,
-            }
-        },
-        _ => {
-            println!("Please enter a number between 1 and 3.");
-            get_user_move()
-        }
-    }
-}
-
-
-
 
 #[cfg(test)]
 mod tests {

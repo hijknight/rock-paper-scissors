@@ -21,7 +21,7 @@ fn main() {
         let user_move = get_user_move();
         let enemy_move = enemy_move();
 
-        let winner = check_who_wins(&user_move, &enemy_move);
+        let winner = check_who_wins_round(&user_move, &enemy_move);
 
         println!("{} vs {} : {}", convert_move_to_string(&user_move), convert_move_to_string(&enemy_move), convert_winner_to_string(&winner));
 

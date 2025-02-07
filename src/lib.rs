@@ -1,3 +1,5 @@
+//! rock-paper-scissors is an open-source game-api for rust that allows users to make custom implementations of rock paper scissors.
+
 
 use rand::Rng;
 use std::io;

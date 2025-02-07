@@ -1,5 +1,5 @@
 
-use rps::*;
+use rock_paper_scissors::*;
 
 
 fn main() {

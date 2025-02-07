@@ -1,7 +1,9 @@
 [package]
-name = "rps"
+name = "rock-paper-scissors"
+license = "MIT"
 version = "0.1.0"
 edition = "2021"
+description = "rock-paper-scissors is a rock paper scissors game api that allows user to make custom rock paper scissors implementations"
 
 [dependencies]
 rand = "0.9.0"

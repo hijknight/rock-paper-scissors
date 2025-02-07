@@ -1,7 +1,7 @@
 [package]
 name = "rock-paper-scissors"
 license = "MIT"
-version = "0.1.1"
+version = "0.2.0"
 edition = "2021"
 documentation = "https://docs.rs/rock-paper-scissors/0.1.0/rock_paper_scissors/"
 description = "rock-paper-scissors is a rock paper scissors game api that allows user to make custom rock paper scissors implementations"

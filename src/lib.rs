@@ -72,7 +72,7 @@
 //!    use rock_paper_scissors::{PlayerMoves, MoveType};
 //!
 //!    let user_move = MoveType::from_user_input();
-//!    println!("You chose: {}", user_move.convert_to_string());
+//!    println!("You chose: {}", user_move.unwrap().convert_to_string());
 //!    ```
 //!
 //! ## Example Usage
@@ -239,30 +239,24 @@ impl MoveType {
     /// println!("Enter your move: (1 = Rock, 2 = Paper, 3 = Scissors)");
     /// let user_move = MoveType::from_user_input();
     ///
-    /// assert!(matches!(user_move, MoveType::Rock | MoveType::Paper | MoveType::Scissors));
+    /// assert!(matches!(user_move, Ok(MoveType::Rock) | Ok(MoveType::Paper) | Ok(MoveType::Scissors)));
     /// ```
     ///
     /// # Behavior
     ///
     /// When the user provides invalid input (e.g., letters or numbers outside the valid range),
     /// the function will re-prompt for valid input until it is received
-    pub fn from_user_input() -> MoveType {
-        loop {
-            print!("Enter your move: (1 = Rock, 2 = Paper, 3 = Scissors): ");
-            io::stdout().flush().unwrap(); // make sure it is printed before input is given
+    pub fn from_user_input() -> Result<MoveType, String> {
+        println!("Enter your move: (1 = Rock, 2 = Paper, 3 = Scissors)");
+        let mut user_input = String::new();
 
-            let mut user_move: String = String::new();
-            io::stdin()
-                .read_line(&mut user_move)
-                .expect("Failed to read line");
+        io::stdin().read_line(&mut user_input).expect("Failed to read line");
 
-            match user_move.trim().parse::<u8>() {
-                Ok(1) => return MoveType::Rock,
-                Ok(2) => return MoveType::Paper,
-                Ok(3) => return MoveType::Scissors,
-                Ok(_) => println!("Please enter a valid number between 1 and 3."),
-                _ => println!("Please enter a valid number."),
-            }
+        match user_input.trim().parse::<u8>() {
+            Ok(1) => Ok(MoveType::Rock),
+            Ok(2) => Ok(MoveType::Paper),
+            Ok(3) => Ok(MoveType::Scissors),
+            _ => Err("Invalid input. Please enter 1, 2, or 3.".to_string()),
         }
     }
 }
@@ -313,8 +307,15 @@ impl PlayerMoves {
     /// assert_eq!(player_moves.enemy_move, MoveType::Scissors);
     /// ```
     pub fn new() -> PlayerMoves {
+        let user_move = loop {
+            match MoveType::from_user_input() {
+                Ok(move_type) => break move_type,
+                Err(e) => println!("{}", e),
+            }
+        };
+
         PlayerMoves {
-            user_move: MoveType::from_user_input(),
+            user_move,
             enemy_move: MoveType::random_move(),
         }
     }

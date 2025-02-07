@@ -113,7 +113,6 @@
 
 use rand::Rng;
 use std::io;
-use std::io::Write;
 
 /// # Winner enum
 ///

@@ -2,7 +2,7 @@
 
 `rock-paper-scissors` is an open-source Rust library and interactive game designed for developers who want to create or customize implementations of the classic "Rock, Paper, Scissors" game while adhering to clean design principles, such as **data encapsulation**.
 
-### [rock-paper-scissors docs.rs](https://docs.rs/rock-paper-scissors/0.1.0/rock_paper_scissors/)
+### [rock-paper-scissors docs.rs](https://docs.rs/rock-paper-scissors/0.2.1/rock_paper_scissors/)
 
 ## Features
 

@@ -1,7 +1,6 @@
 
 use rock_paper_scissors::*;
 
-
 fn main() {
     println!("Welcome to Rock Paper Scissors");
     println!();
@@ -18,12 +17,11 @@ fn main() {
         println!();
         println!("Round {}\n", round);
 
-        let user_move = get_user_move();
-        let enemy_move = enemy_move();
+        let player_moves = PlayerMoves::new(); // gets user input and makes a random enemy move returns MoveType.
 
-        let winner = check_who_wins_round(&user_move, &enemy_move);
+        let winner = player_moves.check_who_wins_round();
 
-        println!("{} vs {} : {}", convert_move_to_string(&user_move), convert_move_to_string(&enemy_move), convert_winner_to_string(&winner));
+        println!("{} vs {} : {}", player_moves.user_move.convert_to_string(), player_moves.enemy_move.convert_to_string(), winner.convert_to_string());
 
         match winner {
             Winner::Tie => {
@@ -40,8 +38,8 @@ fn main() {
         println!("Enemy: {}", scores.enemy_wins);
 
 
-        if let Ok(winner) = check_for_winner(&scores) {
-            println!("{}", convert_winner_to_string(&winner));
+        if let Ok(winner) = scores.check_for_winner() {
+            println!("{}", winner.convert_to_string());
             break;
         }
     }

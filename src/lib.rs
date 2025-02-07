@@ -178,7 +178,6 @@ pub fn convert_winner_to_string(winner: &Winner) -> String {
 ///
 /// ```
 /// loop {
-///     use rps::*;
 ///     // --snip--
 ///
 ///     if let Ok(winner) = check_for_winner(&scores) {

@@ -2,38 +2,41 @@
 
 `rock-paper-scissors` is an open-source Rust library and interactive game designed for developers who want to create or customize implementations of the classic "Rock, Paper, Scissors" game while adhering to clean design principles, such as **data encapsulation**.
 
-### [rock-paper-scissors docs.rs](https://docs.rs/rock-paper-scissors/0.2.1/rock_paper_scissors/)
+### [rock-paper-scissors docs.rs](https://docs.rs/rock-paper-scissors/)
+
+---
 
 ## Features
 
-### Library Highlights (Encapsulation-Enhanced)
-- **Encapsulated Game Logic**:
-    - Game logic is now modular and encapsulated, making it simpler to maintain and extend while protecting key data structures like `Scores` and `PlayerMoves` from misuse.
-    - Example: The new `PlayerMoves` struct centralizes the user's and enemy's move management, encouraging cleaner, structured gameplay operations.
-- **Winner Determination Logic**:
-    - Implements rules for determining the winner for each round in a structured, encapsulated manner, ensuring reusability.
-- **Customizable Gameplay**:
-    - Functions for random enemy move generation (`MoveType::random_move`) and user input handling (`get_user_move`) now integrate naturally with other encapsulated functionalities.
-- **Game State and Round Tracking**:
-    - The `Scores` struct allows easy tracking of wins for the user and enemy, with utility functions to check for the overall winner of the game.
+### Library Highlights
+- **Reusable Game Logic**:
+  - Encapsulated enums and structs for game logic, making it modular and easy to customize.
+  - Functions like `MoveType::random_move` and `MoveType::from_user_input` promote both randomness and user interactivity.
+- **Winner Determination**:
+  - Implements clear rules for determining the winner for each round.
+- **Score Tracking**:
+  - Tracks wins for the user and enemy throughout the game with helper methods like `Scores::check_for_winner`.
 - **Utilities for Friendly Output**:
-    - Easily convert `MoveType` and `Winner` enums into human-readable strings for a smoother integration into user interfaces.
+  - `MoveType` and `Winner` enums are convertible to human-readable text for better integration into user interfaces.
 
 ### Game Highlights
+- Work interactively using functions like `MoveType::from_user_input`.
 - Play a head-to-head match against a randomly generated opponent (enemy).
-- Encapsulated game-loop logic for cleaner and more adaptive gameplay behavior.
-- Scores are tracked and reset automatically across rounds.
-- User-friendly input validation ensures a seamless experience for both players and developers.
+- Built-in input validation ensures a smooth, error-free experience.
 
 ---
 
 ## Getting Started
 
 ### Prerequisites
+
+To use or play the `rock-paper-scissors` library, you'll need:
+
 - Rust (v1.64 or higher)
-- Cargo for dependency and package management.
+- Cargo to compile and run the game.
 
 ### Installation
+
 To use the `rock-paper-scissors` library in your project, add the following to your `Cargo.toml`:
 
 ```toml
@@ -41,31 +44,38 @@ To use the `rock-paper-scissors` library in your project, add the following to y
 rock-paper-scissors = "0.1.0"
 ```
 
-To play the built-in game:
-1. Clone this repository:
+To run the game interactively:
+
+1. Clone the repository:
    ```bash
    git clone https://github.com/your-repo-name/rock-paper-scissors.git
    cd rock-paper-scissors
    ```
-2. Run the game:
+2. Use Cargo to run the game:
    ```bash
    cargo run
    ```
 
 ---
 
-## Usage Example: As a Library
+## Usage Example: Using the New `from_user_input` Method
 
-Here's how you can use the encapsulated `rock-paper-scissors` library to implement a round of the game:
+Here’s an example of how to use the updated `MoveType::from_user_input` method to create a round of Rock-Paper-Scissors:
 
 ```rust
-use rock_paper_scissors::*;
+use rock_paper_scissors::{MoveType, PlayerMoves, Winner};
 
 fn main() {
-    // Generate a user move and a random enemy move.
+    println!("Choose 1 (Rock), 2 (Paper), or 3 (Scissors):");
+
+    // Use `from_user_input` to get a move directly from the user
+    let user_move = MoveType::from_user_input();
+    let enemy_move = MoveType::random_move();
+
+    // Combine into `PlayerMoves` and evaluate the round winner
     let player_moves = PlayerMoves {
-        user_move: MoveType::Rock, // Or use `get_user_move()` for interactivity.
-        enemy_move: MoveType::random_move(),
+        user_move,
+        enemy_move,
     };
 
     let winner = player_moves.check_who_wins_round();
@@ -74,129 +84,107 @@ fn main() {
         "User Move: {}, Enemy Move: {}, Round Result: {}",
         player_moves.user_move.convert_to_string(),
         player_moves.enemy_move.convert_to_string(),
-        winner.convert_to_string(),
+        winner.convert_to_string()
     );
 }
 ```
 
-This structure ensures clear encapsulation, so developers can focus only on high-level gameplay operations.
+---
+
+## Encapsulation Overview
+
+### New Method: `MoveType::from_user_input`
+
+The `from_user_input` method simplifies interactive gameplay by directly asking the user for input.
+
+- Prompts the user for input (`1` for Rock, `2` for Paper, `3` for Scissors).
+- Ensures valid input through looping and re-prompting until the user enters a correct value.
+- Returns a corresponding `MoveType`.
+
+### Available Core Types and Methods
+
+#### **Enums**
+
+- **`Winner`**:
+  - Represents the outcomes of a round (`User`, `Enemy`, `Tie`).
+  - Includes `Winner::convert_to_string()` for readable output.
+- **`MoveType`**:
+  - Represents the three possible moves (`Rock`, `Paper`, `Scissors`).
+  - Includes utility methods:
+    - `MoveType::random_move()` for random enemy moves.
+    - `MoveType::convert_to_string()` for printing moves.
+    - `MoveType::from_user_input()` for user-interactive input (new).
+
+#### **Structs**
+
+- **`PlayerMoves`**:
+  - Tracks both user and enemy moves.
+  - Includes methods like `PlayerMoves::check_who_wins_round()` to evaluate the round winner.
+- **`Scores`**:
+  - Tracks overall scores (user wins and enemy wins).
+  - Includes methods like `Scores::check_for_winner()` and `Scores::reset()`.
 
 ---
 
-## Usage Example: Playing the Game
+## Playing the Full Game
 
-To play the game interactively, simply run:
-
-```bash
-Welcome to Rock Paper Scissors
-
-Choose your move:
-   1. Rock
-   2. Paper
-   3. Scissors
-// Player selects a move, and gameplay proceeds based on their input.
-```
-
-Gameplay will continue until either the user or the enemy wins 3 rounds.
-
----
-
-## Encapsulation Enhancements Overview
-
-### Structs
-
-Encapsulation focuses on bundling data and operations in logical units, simplifying the API surface.
-
-#### **`PlayerMoves` Struct**
-Manages round-specific user and enemy moves.
-- `pub user_move: MoveType`: Represents the user's current move.
-- `pub enemy_move: MoveType`: Represents the randomly chosen enemy move.
-
-#### **`Scores` Struct**
-Tracks wins for each player.
-- `pub user_wins: u8`
-- `pub enemy_wins: u8`
-- Encapsulated methods:
-    - `Scores::new() -> Scores`: Initializes a clean scoresheet.
-    - `Scores::check_for_winner() -> Result<Winner, &str>`: Determines overall winner or indicates ongoing gameplay.
-    - `Scores::reset()`: Resets the scores to `0`.
-
-### Enums
-
-Match states and move types are represented using enums for clarity and type safety.
-
-#### **`Winner` Enum**
-- `Winner::User`: Indicates the user won.
-- `Winner::Enemy`: Indicates the enemy won.
-- `Winner::Tie`: Indicates the round was a tie.
-- Encapsulation utility:
-    - `Winner::convert_to_string(&self) -> String`: Produces a human-readable string representation of the winner.
-
-#### **`MoveType` Enum**
-- `MoveType::Rock`
-- `MoveType::Paper`
-- `MoveType::Scissors`
-- Encapsulation utilities:
-    - `MoveType::random_move() -> MoveType`: Generates a random move.
-    - `MoveType::convert_to_string(&self) -> String`: Produces a user-friendly string representation of the move.
-
----
-
-## Core Game Logic Overview
-
-### Gameplay Loop
-The game's internal loop uses encapsulated interactions for user moves, enemy move generation, and winner determination:
+The following example shows the complete game implementation:
 
 ```rust
-loop {
-    let player_moves = PlayerMoves::new();
-    let winner = player_moves.check_who_wins_round();
-    scores.update(winner);
-    if let Ok(game_winner) = scores.check_for_winner() {
-        println!("{}", game_winner.convert_to_string());
-        break;
+use rock_paper_scissors::{PlayerMoves, Scores, Winner, MoveType};
+
+fn main() {
+    let mut scores = Scores::new();
+
+    println!("Welcome to Rock-Paper-Scissors!");
+
+    // Game loop
+    while scores.check_for_winner().is_err() {
+        let player_moves = PlayerMoves::new();
+
+        let winner = player_moves.check_who_wins_round();
+        println!(
+            "You chose {}. Enemy chose {}.",
+            player_moves.user_move.convert_to_string(),
+            player_moves.enemy_move.convert_to_string()
+        );
+        println!("{}", winner.convert_to_string());
+
+        // Update scores
+        match winner {
+            Winner::User => scores.user_wins += 1,
+            Winner::Enemy => scores.enemy_wins += 1,
+            Winner::Tie => (),
+        }
+        println!("Current Scores -> You: {}, Enemy: {}", scores.user_wins, scores.enemy_wins);
     }
+
+    // End game
+    let final_winner = scores.check_for_winner().unwrap();
+    println!("Game over! {}", final_winner.convert_to_string());
 }
 ```
-
-This clean encapsulation ensures the logic remains separate from the interface or any extra layers of complexity.
-
----
-
-## API Highlights
-
-### Game Logic
-- `PlayerMoves::new() -> PlayerMoves`: Initializes round-specific user and enemy moves.
-- `PlayerMoves::check_who_wins_round(&self) -> Winner`: Determines the round winner.
-- `Scores::check_for_winner(&self) -> Result<Winner, &str>`: Checks if a player has reached the winning condition (first to 3 wins).
-
-### Utilities
-- `MoveType::random_move() -> MoveType`: Generates a random enemy move (`Rock`, `Paper`, or `Scissors`).
-- `Winner::convert_to_string(&self) -> String`: Returns a human-readable winner message (e.g., `"Tie!"`, `"You win!"`).
 
 ---
 
 ## Testing
 
-The library includes complete unit tests covering all core features, such as:
-- Accurate handling of all potential gameplay outcomes.
-- Validation of string conversions for enums.
-- Structural correctness and encapsulated methods.
+The library includes a comprehensive suite of tests to ensure accurate functionality. Testing can be run as follows:
 
-Run the tests with:
 ```bash
 cargo test
 ```
 
-Example test:
+Example of a typical test:
+
 ```rust
 #[test]
-fn test_check_who_wins_round() {
-    let player_moves = PlayerMoves {
-        user_move: MoveType::Rock,
-        enemy_move: MoveType::Scissors,
-    };
-    assert_eq!(player_moves.check_who_wins_round(), Winner::User);
+fn test_random_move() {
+    use rock_paper_scissors::MoveType;
+
+    // Validate that random_move generates valid results.
+    let random_move = MoveType::random_move();
+    assert!(matches!(random_move, MoveType::Rock | MoveType::Paper | MoveType::Scissors));
 }
 ```
 
@@ -204,17 +192,17 @@ fn test_check_who_wins_round() {
 
 ## Contributing
 
-Contributions are welcome! Follow these steps to contribute:
+We welcome contributions! If you'd like to improve the library, follow these steps:
+
 1. Fork the repository.
-2. Create a new feature branch.
-3. Commit your changes and push.
-4. Open a pull request for review.
+2. Create a branch for your changes.
+3. Make your edits and commit your changes.
+4. Open a pull request.
+
+For suggestions or feature requests, open an issue, and let us know how we can improve.
 
 ---
 
 ## License
-This project is licensed under the [MIT License](./LICENSE). See the `LICENSE` file for more details.
 
----
-
-Enjoy coding and playing with `rock-paper-scissors`! 🎮
+This project is distributed under the MIT License. See the `LICENSE` file for more information.

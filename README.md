@@ -1,8 +1,12 @@
 # rock-paper-scissors
 
-`rock-paper-scissors` is an open-source Rust library and interactive game designed for developers to create or customize implementations of the classic "Rock, Paper, Scissors" game. It adheres to **clean design principles**, offering modular functionality and robust error handling.
+`rock-paper-scissors` is an open-source Rust library and interactive game designed for developers to create or customize implementations of the classic "Rock, Paper, Scissors" game. It adheres to **clean design principles**, offering modular functionality, safe initialization, and robust error handling.
 
-### [rock-paper-scissors Documentation on docs.rs](https://docs.rs/rock-paper-scissors/)
+### [docs.rs](https://docs.rs/rock-paper-scissors/)
+
+### [Crates.io](https://crates.io/crates/rock-paper-scissors/versions)
+
+### [Github repo](https://github.com/hijknight/rock-paper-scissors)
 
 ---
 
@@ -10,15 +14,18 @@
 
 ### Library Highlights
 - **Customizable Game Logic**:
-  - Enums and structs encapsulate game logic for modularity and easy customization.
-  - Functions like `MoveType::random_move` and `MoveType::from_user_input` simplify both randomness and interactivity.
+    - Enums and structs encapsulate game logic for modularity and easy customization.
+    - New `MoveType::None` variant ensures safe initialization for moves.
+    - Methods like `MoveType::random_move` simplify randomization, while `MoveType::from_user_input` handles inputs gracefully.
 - **Winner Determination**:
-  - Built-in logic determines the winner of each round with clear rules (`PlayerMoves::check_who_wins_round`).
+    - Built-in logic determines the winner of each round with clear rules (`PlayerMoves::check_who_wins_round`).
 - **Score Management**:
-  - Tracks user and enemy wins during the game with a `Scores` struct.
-  - Allows checking the game's end (`Scores::check_for_winner`) or resetting (`Scores::reset`).
+    - Tracks user and enemy wins during the game with a `Scores` struct.
+    - Allows checking the game's end (`Scores::check_for_winner`) or resetting (`Scores::reset`).
+- **Safe Initialization**:
+    - The `PlayerMoves::new` method initializes moves (`user_move` and `enemy_move`) as `MoveType::None`, reducing errors during uninitialized states.
 - **Friendly Output Utilities**:
-  - Human-readable string conversion for enums like `MoveType` and `Winner` provides better UI/UX.
+    - Human-readable string conversion for enums like `MoveType` and `Winner` provides better readability and interaction.
 
 ### Game Highlights
 - Interactive gameplay through `MoveType::from_user_input` for user moves.
@@ -42,7 +49,7 @@ To use the `rock-paper-scissors` library in your project, include it in your `Ca
 
 ```toml
 [dependencies]
-rock-paper-scissors = "0.1.0"
+rock-paper-scissors = "0.3.0"
 ```
 
 For the interactive game:
@@ -66,63 +73,82 @@ For the interactive game:
 #### **Enums**
 
 1. **Winner**
-  - Represents round outcomes: `User`, `Enemy`, or `Tie`.
-  - Includes `Winner::convert_to_string` for clear textual output.  
-    Example output: `"You win!"` or `"You lose!"`
+- Represents round outcomes: `User`, `Enemy`, or `Tie`.
+- Includes `Winner::convert_to_string` for clear textual output.  
+  Example output: `"You win!"` or `"You lose!"`.
 
 2. **MoveType**
-  - Represents available moves (`Rock`, `Paper`, `Scissors`).
-  - Key methods:
+- Represents available moves (`Rock`, `Paper`, `Scissors`) and includes a new variant:
+    - **`MoveType::None`**: Represents an uninitialized state or invalid move, ensuring safe initialization.
+- Key methods:
     - **`MoveType::random_move`**: Generates a random move for non-interactive gameplay.
-    - **`MoveType::from_user_input`**: Enables user move input with input validation.
-    - **`MoveType::convert_to_string`**: Turns moves (like `MoveType::Rock`) into a human-readable format (`"Rock"`).
+    - **`MoveType::from_user_input`**: Validates and converts user input to move types.
+    - **`MoveType::convert_to_string`**: Converts moves (like `MoveType::Rock`) into a human-readable format (`"Rock"`).
 
-   Example:
-    ```rust
-    use rock_paper_scissors::{MoveType, Winner};
+Example:
+```rust
+use rock_paper_scissors::{MoveType, Winner};
 
-    // Generate random enemy move
-    let enemy_move = MoveType::random_move();
-    assert!(matches!(enemy_move, MoveType::Rock | MoveType::Paper | MoveType::Scissors));
-    ```
+// Generate random enemy move
+let enemy_move = MoveType::random_move();
+assert!(matches!(enemy_move, MoveType::Rock | MoveType::Paper | MoveType::Scissors));
+
+// Handle uninitialized moves
+let unset_move = MoveType::None;
+assert_eq!(unset_move.convert_to_string(), "None");
+```
 
 #### **Structs**
 
 1. **PlayerMoves**
-  - Bundles the user's and the enemy's moves for a single round.
-  - Provides `PlayerMoves::check_who_wins_round` to determine the round winner based on rules.
+- Bundles the user's and the enemy's moves for a single round.
+- Features:
+    - **`PlayerMoves::new`**: Initializes moves as `MoveType::None` for safe usage.
+    - **`PlayerMoves::check_who_wins_round`**: Determines the round winner.
+    - **`PlayerMoves::build`**: Completes initialization with user input and a random enemy move.
 
-   Example:
-    ```rust
-    use rock_paper_scissors::{MoveType, PlayerMoves, Winner};
+Example:
+```rust
+use rock_paper_scissors::{MoveType, PlayerMoves, Winner};
 
-    let player_moves = PlayerMoves {
-        user_move: MoveType::Rock,
-        enemy_move: MoveType::Scissors,
-    };
-    assert_eq!(player_moves.check_who_wins_round(), Winner::User);
-    ```
+// Initialize moves
+let moves = PlayerMoves::new();
+assert_eq!(moves.user_move, MoveType::None);
+assert_eq!(moves.enemy_move, MoveType::None);
+
+// Check round winner
+let player_moves = PlayerMoves {
+user_move: MoveType::Rock,
+enemy_move: MoveType::Scissors,
+};
+assert_eq!(player_moves.check_who_wins_round(), Winner::User);
+```
 
 2. **Scores**
-  - Tracks the cumulative wins for both the user and the enemy.
-  - Key methods:
+- Tracks the cumulative wins for both the user and the enemy.
+- Features:
     - **`Scores::check_for_winner`**: Determines if a player has reached the game's win condition (e.g., first to 3 wins).
     - **`Scores::reset`**: Resets scores for a new game.
 
-   Example:
-    ```rust
-    use rock_paper_scissors::{Scores, Winner};
+Example:
+```rust
+use rock_paper_scissors::{Scores, Winner};
 
-    let mut scores = Scores::new();
-    scores.user_wins += 3;
-    assert_eq!(scores.check_for_winner(), Ok(Winner::User));
-    ```
+let mut scores = Scores::new();
+scores.user_wins += 3;
+assert_eq!(scores.check_for_winner(), Ok(Winner::User));
+
+// Reset scores
+scores.reset();
+assert_eq!(scores.user_wins, 0);
+assert_eq!(scores.enemy_wins, 0);
+```
 
 ---
 
 ## Playing the Game
 
-Here is a complete example of how to implement and play a game of Rock-Paper-Scissors using the library:
+Here's an interactive example of how to play a game of Rock-Paper-Scissors using the library:
 
 ```rust
 use rock_paper_scissors::{PlayerMoves, Scores, Winner, MoveType};
@@ -134,7 +160,7 @@ fn main() {
 
     // Game loop
     while scores.check_for_winner().is_err() {
-        let player_moves = PlayerMoves::new();
+        let player_moves = PlayerMoves::build();
 
         let round_winner = player_moves.check_who_wins_round();
         println!(
@@ -168,22 +194,24 @@ fn main() {
 ## Error Handling
 
 ### Key Error Scenarios
-- Invalid user input is handled gracefully by reprompting until valid input is provided (`MoveType::from_user_input`).
-- Functions return result types (`Result` or `Option`) when necessary, ensuring invalid states are never propagated silently.
+- **Invalid user input**:
+    - If the player enters invalid input (e.g., letters, out-of-range numbers), the game reprompts them via `MoveType::from_user_input`.
+- **Uninitialized states**:
+    - The `MoveType::None` variant prevents invalid states during custom logic or gameplay setup.
 
 ---
 
 ## Testing
 
-This library features comprehensive tests to validate all core functionality. To run tests:
+The library has a comprehensive suite of unit tests covering all core functionality. To run the tests:
 
 1. Clone the repository.
-2. Run Cargo tests:
+2. Run `cargo test`:
    ```bash
    cargo test
    ```
 
-Here is an example test implementation:
+Here’s an example test for ensuring valid round results:
 
 ```rust
 #[test]
@@ -202,17 +230,16 @@ fn test_round_result() {
 
 ## Contributing
 
-We welcome contributions! Follow these steps to contribute:
+We welcome contributions! To contribute:
 
 1. Fork this repository.
 2. Create a new branch for your feature or bug fix.
-3. Commit your changes and push them to your fork.
-4. Open a pull request describing your changes.
+3. Push your changes and open a Pull Request.
 
-For feature requests or feedback, please open an issue on the GitHub repository.
+For feature requests or issues, please open a GitHub issue.
 
 ---
 
 ## License
 
-This project is distributed under the MIT License. See the `LICENSE` file for more details.
+This project is distributed under the MIT License. See the `LICENSE` file for details.

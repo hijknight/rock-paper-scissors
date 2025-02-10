@@ -17,7 +17,7 @@ fn main() {
         println!();
         println!("Round {}\n", round);
 
-        let player_moves = PlayerMoves::new(); // gets user input and makes a random enemy move returns MoveType.
+        let player_moves = PlayerMoves::build(); // gets user input and makes a random enemy move returns MoveType.
 
         let winner = player_moves.check_who_wins_round();
 

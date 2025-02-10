@@ -86,7 +86,7 @@
 //!     let mut scores = Scores::new();
 //!
 //!     while scores.check_for_winner().is_err() {
-//!         let player_moves = PlayerMoves::new();
+//!         let player_moves = PlayerMoves::build();
 //!
 //!         let round_winner = player_moves.check_who_wins_round();
 //!         println!("Round result: {}", round_winner.convert_to_string());
@@ -158,26 +158,74 @@ impl Winner {
     }
 }
 
-/// # MoveType enum
+/// # MoveType Enum
 ///
-/// Represents the possible moves in the game: `Rock`, `Paper`, or `Scissors`.
+/// Represents the possible moves in the game, providing safety and clarity in game logic.
+/// Now includes a `None` variant for uninitialized or invalid move states.
 ///
-/// # Examples
+/// ## Variants
+///
+/// - `MoveType::Rock`: The "Rock" move.
+/// - `MoveType::Paper`: The "Paper" move.
+/// - `MoveType::Scissors`: The "Scissors" move.
+/// - `MoveType::None`: A default state to handle uninitialized or invalid moves.
+///
+/// ## Key Features
+///
+/// - **Randomized Moves**: Generates a random move using `random_move()`.
+/// - **String Conversion**: Converts moves to a user-friendly `String` using `convert_to_string()`.
+/// - **Controlled User Input**: Converts valid input into a `MoveType` using `from_user_input()`.
+///
+/// ## Examples
+///
+/// ### Create a MoveType
 ///
 /// ```rust
 /// use rock_paper_scissors::MoveType;
 ///
-/// let new_move = MoveType::Rock;
-/// assert_eq!(new_move.convert_to_string(), "Rock");
+/// let move_type = MoveType::Rock;
+/// assert_eq!(move_type.convert_to_string(), "Rock");
+/// ```
+///
+/// ### Generate a Random Move
+///
+/// ```rust
+/// use rock_paper_scissors::MoveType;
 ///
 /// let random_move = MoveType::random_move();
 /// assert!(matches!(random_move, MoveType::Rock | MoveType::Paper | MoveType::Scissors));
+/// ```
+///
+/// ### Handle Uninitialized Moves
+///
+/// The `None` variant is helpful when moves are not immediately set:
+///
+/// ```rust
+/// use rock_paper_scissors::MoveType;
+///
+/// let move_type = MoveType::None;
+/// assert_eq!(move_type.convert_to_string(), "None");
+/// ```
+///
+/// ### Convert User Input
+///
+/// ```no_run
+/// use rock_paper_scissors::MoveType;
+///
+/// println!("Enter your move: 1 (Rock), 2 (Paper), or 3 (Scissors)");
+/// let user_move = MoveType::from_user_input();
+///
+/// match user_move {
+///     Ok(move_type) => println!("You chose: {}", move_type.convert_to_string()),
+///     Err(err) => println!("Error: {}", err),
+/// }
 /// ```
 #[derive(Debug, PartialEq)]
 pub enum MoveType {
     Rock,
     Paper,
     Scissors,
+    None,
 }
 
 impl MoveType {
@@ -216,6 +264,7 @@ impl MoveType {
             Self::Rock => "Rock".to_string(),
             Self::Paper => "Paper".to_string(),
             Self::Scissors => "Scissors".to_string(),
+            Self::None => "None".to_string(),
         }
     }
 
@@ -260,24 +309,47 @@ impl MoveType {
     }
 }
 
-/// # PlayerMoves struct
+
+/// # PlayerMoves Struct
 ///
-/// Represents the moves made by the user and the enemy in a single round of the game.
+/// Represents the moves made by the user and the opponent in a single round of the game.
 ///
-/// - `user_move`: Move made by the user.
-/// - `enemy_move`: Move made by the enemy.
+/// ## Fields
 ///
-/// # Examples
+/// - `user_move`:
+///   - The move chosen by the user (of type `MoveType`).
+///   - Defaults to `MoveType::None` when uninitialized.
+/// - `enemy_move`:
+///   - The move chosen by the opponent (of type `MoveType`).
+///   - Defaults to `MoveType::None` when uninitialized.
 ///
+/// ## Methods
+///
+/// - **`PlayerMoves::new()`**: Safely initializes a `PlayerMoves` instance with both moves set to `MoveType::None`.
+/// - **`PlayerMoves::build()`**: Builds a new `PlayerMoves` instance by getting the user's input and randomly generating the enemy's move.
+/// - **`PlayerMoves::check_who_wins_round()`**: Determines the winner of the round based on the moves.
+///
+/// ## Examples
+///
+/// ### Initialize PlayerMoves with Default Values
+/// ```rust
+/// use rock_paper_scissors::{PlayerMoves, MoveType};
+///
+/// let moves = PlayerMoves::new();
+/// assert_eq!(moves.user_move, MoveType::None);
+/// assert_eq!(moves.enemy_move, MoveType::None);
+/// ```
+///
+/// ### Create and Compare Moves
 /// ```rust
 /// use rock_paper_scissors::{PlayerMoves, MoveType, Winner};
 ///
-/// let player_moves = PlayerMoves {
+/// let moves = PlayerMoves {
 ///     user_move: MoveType::Rock,
 ///     enemy_move: MoveType::Scissors,
 /// };
 ///
-/// assert_eq!(player_moves.check_who_wins_round(), Winner::User);
+/// assert_eq!(moves.check_who_wins_round(), Winner::User);
 /// ```
 #[derive(Debug, PartialEq)]
 pub struct PlayerMoves {
@@ -286,7 +358,30 @@ pub struct PlayerMoves {
 }
 
 impl PlayerMoves {
-    /// Creates a new `PlayerMoves` instance with a random enemy move and the user's move provided via input.
+
+    /// Creates a new `PlayerMoves` instance with both the `user_move` and `enemy_move` set to `MoveType::None`.
+    ///
+    /// This provides a safe starting state where moves can be explicitly set at a later stage.
+    /// It is particularly useful for initializing structures in cases where moves are assigned dynamically (e.g., during gameplay).
+    ///
+    /// ## Examples
+    ///
+    /// ### Default Initialization
+    /// ```rust
+    /// use rock_paper_scissors::{PlayerMoves, MoveType};
+    ///
+    /// let moves = PlayerMoves::new();
+    /// assert_eq!(moves.user_move, MoveType::None);
+    /// assert_eq!(moves.enemy_move, MoveType::None);
+    /// ```
+    pub fn new() -> PlayerMoves {
+        PlayerMoves {
+            user_move: MoveType::None,
+            enemy_move: MoveType::None,
+        }
+    }
+
+    /// Builds a new `PlayerMoves` instance with a random enemy move and the user's move provided via input.
     ///
     /// # Warning
     ///
@@ -297,6 +392,10 @@ impl PlayerMoves {
     /// ```rust
     /// use rock_paper_scissors::{PlayerMoves, MoveType};
     ///
+    /// // let player_moves = PlayerMoves::build();
+    ///
+    /// // the build function takes user input, so this is an example output.
+    ///
     /// let player_moves = PlayerMoves {
     ///     user_move: MoveType::Rock,
     ///     enemy_move: MoveType::Scissors,
@@ -305,7 +404,7 @@ impl PlayerMoves {
     /// assert_eq!(player_moves.user_move, MoveType::Rock);
     /// assert_eq!(player_moves.enemy_move, MoveType::Scissors);
     /// ```
-    pub fn new() -> PlayerMoves {
+    pub fn build() -> PlayerMoves {
         let user_move = loop {
             match MoveType::from_user_input() {
                 Ok(move_type) => break move_type,

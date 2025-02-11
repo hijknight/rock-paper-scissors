@@ -483,9 +483,9 @@ impl Scores {
         }
     }
 
-    /// Checks if the game has a winner (first to 3 wins).
+    /// Checks if the game has a winner (first to however many wins).
     ///
-    /// If either the user or the enemy has 3 wins, returns the winner as `Ok(Winner)`. Otherwise, returns an error message.
+    /// If either the user or the enemy has a certain number of specified wins, returns the winner as `Ok(Winner)`. Otherwise, returns an `Err` type.a
     ///
     /// # Examples
     ///

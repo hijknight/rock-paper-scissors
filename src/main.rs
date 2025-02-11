@@ -41,7 +41,8 @@ fn main() {
 
 
         if let Ok(winner) = scores.check_for_winner(first_to) { // first_to refers to first to 3 rounds
-            println!("{}", winner.convert_to_string());
+            let winner_name = winner.convert_to_string();
+            println!("{} wins!", winner_name);
             break;
         }
     }

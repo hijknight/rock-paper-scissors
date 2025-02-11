@@ -61,7 +61,7 @@
 //!    let mut scores = Scores::new();
 //!    scores.user_wins += 1;
 //!
-//!    let winner = scores.check_for_winner();
+//!    let winner = scores.check_for_winner(3);
 //!    assert!(winner.is_err()); // No winner yet
 //!    ```
 //!
@@ -85,7 +85,7 @@
 //! fn main() {
 //!     let mut scores = Scores::new();
 //!
-//!     while scores.check_for_winner().is_err() {
+//!     while scores.check_for_winner(3).is_err() {
 //!         let player_moves = PlayerMoves::build();
 //!
 //!         let round_winner = player_moves.check_who_wins_round();
@@ -100,7 +100,7 @@
 //!         println!("Scores -> User: {}, Enemy: {}", scores.user_wins, scores.enemy_wins);
 //!     }
 //!
-//!     let game_winner = scores.check_for_winner().unwrap();
+//!     let game_winner = scores.check_for_winner(3).unwrap();
 //!     println!("Game Over! Winner: {}", game_winner.convert_to_string());
 //! }
 //! ```
@@ -497,15 +497,15 @@ impl Scores {
     ///     enemy_wins: 2,
     /// };
     ///
-    /// assert_eq!(scores.check_for_winner(), Ok(Winner::User));
+    /// assert_eq!(scores.check_for_winner(3), Ok(Winner::User));
     /// ```
-    pub fn check_for_winner(&self) -> Result<Winner, &str> {
-        if self.user_wins == 3 {
+    pub fn check_for_winner(&self, first_to: u8) -> Result<Winner, &str> {
+        if self.user_wins == first_to {
             Ok(Winner::User)
-        } else if self.enemy_wins == 3 {
+        } else if self.enemy_wins == first_to {
             Ok(Winner::Enemy)
         } else {
-            Err("No winner yet")
+            Err("rock-paper-scissors: err: No winner yet")
         }
     }
 
@@ -542,21 +542,21 @@ mod tests {
             enemy_wins: 1,
         };
 
-        assert_eq!(scores.check_for_winner(), Ok(Winner::User));
+        assert_eq!(scores.check_for_winner(3), Ok(Winner::User));
 
         let scores = Scores {
             user_wins: 2,
             enemy_wins: 3
         };
 
-        assert_eq!(scores.check_for_winner(), Ok(Winner::Enemy));
+        assert_eq!(scores.check_for_winner(3), Ok(Winner::Enemy));
 
         let scores = Scores {
             user_wins: 1,
             enemy_wins: 0,
         };
 
-        assert_eq!(scores.check_for_winner(), Err("No winner yet"));
+        assert_eq!(scores.check_for_winner(3), Err("No winner yet"));
     }
 
     #[test]

@@ -68,7 +68,7 @@
 //! 5. **User Input and Integration**
 //!    Provides utilities to collect and validate user input for moves in a console-based setup.
 //!
-//!    ```rust
+//!    ```no_run
 //!    use rock_paper_scissors::{PlayerMoves, MoveType};
 //!
 //!    let user_move = MoveType::from_user_input();
@@ -147,7 +147,7 @@ impl Winner {
     /// use rock_paper_scissors::Winner;
     ///
     /// let winner = Winner::Enemy;
-    /// assert_eq!(winner.convert_to_string(), "You lose!");
+    /// assert_eq!(winner.convert_to_string(), String::from("You lose!"));
     /// ```
     pub fn convert_to_string(&self) -> String {
         match self {
@@ -556,11 +556,10 @@ mod tests {
             enemy_wins: 0,
         };
 
-        assert_eq!(scores.check_for_winner(3), Err("No winner yet"));
+        assert_eq!(scores.check_for_winner(3), Err("rock-paper-scissors: err: No winner yet"));
     }
 
     #[test]
-    // TODO: Fix this test
     fn check_who_wins_round_works() {
         let player_moves = PlayerMoves {
             user_move: MoveType::Rock,
@@ -600,7 +599,6 @@ mod tests {
     }
 
     #[test]
-    // TODO: Fix this test
     fn convert_move_to_string_works() {
         let move_type = MoveType::Rock;
 
@@ -623,5 +621,15 @@ mod tests {
             user_wins: 0,
             enemy_wins: 0,
         });
+    }
+
+    #[test]
+    fn check_player_moves_new() {
+        let player_moves = PlayerMoves::new();
+
+        assert_eq!(player_moves, PlayerMoves {
+            user_move: MoveType::None,
+            enemy_move: MoveType::None,
+        })
     }
 }

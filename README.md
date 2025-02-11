@@ -49,7 +49,7 @@ To use the `rock-paper-scissors` library in your project, include it in your `Ca
 
 ```toml
 [dependencies]
-rock-paper-scissors = "0.3.3"
+rock-paper-scissors = "0.3.4"
 ```
 
 For the interactive game:

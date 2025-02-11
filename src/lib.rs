@@ -23,7 +23,7 @@
 //!    use rock_paper_scissors::Winner;
 //!
 //!    let winner = Winner::User;
-//!    println!("{}", winner.convert_to_string()); // "You win!"
+//!    println!("{}", winner.convert_to_string()); // "User"
 //!    ```
 //!
 //! 2. **MoveType Enum**
@@ -151,9 +151,9 @@ impl Winner {
     /// ```
     pub fn convert_to_string(&self) -> String {
         match self {
-            Self::Tie => "Tie!".to_string(),
-            Self::User => "You win!".to_string(),
-            Self::Enemy => "You lose!".to_string(),
+            Self::Tie => "Tie".to_string(),
+            Self::User => "User".to_string(),
+            Self::Enemy => "Enemy".to_string(),
         }
     }
 }
@@ -587,15 +587,15 @@ mod tests {
     fn convert_winner_to_string_works() {
         let winner = Winner::Tie;
 
-        assert_eq!(winner.convert_to_string(), "Tie!");
+        assert_eq!(winner.convert_to_string(), "Tie");
 
         let winner = Winner::User;
 
-        assert_eq!(winner.convert_to_string(), "You win!");
+        assert_eq!(winner.convert_to_string(), "User");
 
         let winner = Winner::Enemy;
 
-        assert_eq!(winner.convert_to_string(), "You lose!");
+        assert_eq!(winner.convert_to_string(), "Enemy");
     }
 
     #[test]

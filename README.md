@@ -28,7 +28,7 @@
     - Human-readable string conversion for enums like `MoveType` and `Winner` provides better readability and interaction.
 
 ### Game Highlights
-- Interactive gameplay through `MoveType::from_user_input` for user moves.
+- Interactive gameplay through `MoveType::from_user_input()` for user moves.
 - Head-to-head matches with a randomly generated opponent.
 - Input validation ensures smooth, error-free gameplay.
 
@@ -49,7 +49,7 @@ To use the `rock-paper-scissors` library in your project, include it in your `Ca
 
 ```toml
 [dependencies]
-rock-paper-scissors = "0.3.0"
+rock-paper-scissors = "0.3.1"
 ```
 
 For the interactive game:
@@ -136,7 +136,7 @@ use rock_paper_scissors::{Scores, Winner};
 
 let mut scores = Scores::new();
 scores.user_wins += 3;
-assert_eq!(scores.check_for_winner(), Ok(Winner::User));
+assert_eq!(scores.check_for_winner(3), Ok(Winner::User)); // user should win
 
 // Reset scores
 scores.reset();
@@ -155,11 +155,12 @@ use rock_paper_scissors::{PlayerMoves, Scores, Winner, MoveType};
 
 fn main() {
     let mut scores = Scores::new();
+    let first_to = 3;
 
     println!("Welcome to Rock-Paper-Scissors!");
 
     // Game loop
-    while scores.check_for_winner().is_err() {
+    while scores.check_for_winner(3).is_err() {
         let player_moves = PlayerMoves::build();
 
         let round_winner = player_moves.check_who_wins_round();
@@ -184,7 +185,7 @@ fn main() {
     }
 
     // Display final results
-    let game_winner = scores.check_for_winner().unwrap();
+    let game_winner = scores.check_for_winner(3).unwrap();
     println!("Game over! {}", game_winner.convert_to_string());
 }
 ```
@@ -198,33 +199,6 @@ fn main() {
     - If the player enters invalid input (e.g., letters, out-of-range numbers), the game reprompts them via `MoveType::from_user_input`.
 - **Uninitialized states**:
     - The `MoveType::None` variant prevents invalid states during custom logic or gameplay setup.
-
----
-
-## Testing
-
-The library has a comprehensive suite of unit tests covering all core functionality. To run the tests:
-
-1. Clone the repository.
-2. Run `cargo test`:
-   ```bash
-   cargo test
-   ```
-
-Here’s an example test for ensuring valid round results:
-
-```rust
-#[test]
-fn test_round_result() {
-    use rock_paper_scissors::{MoveType, PlayerMoves, Winner};
-
-    let moves = PlayerMoves {
-        user_move: MoveType::Rock,
-        enemy_move: MoveType::Scissors,
-    };
-    assert_eq!(moves.check_who_wins_round(), Winner::User);
-}
-```
 
 ---
 

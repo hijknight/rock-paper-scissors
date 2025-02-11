@@ -32,6 +32,6 @@ fn main() {
     }
 
     // Display final results
-    let game_winner = scores.check_for_winner(3).unwrap();
+    let game_winner = scores.check_for_winner(first_to).unwrap();
     println!("Game over! {}", game_winner.convert_to_string());
 }

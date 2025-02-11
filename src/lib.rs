@@ -101,7 +101,7 @@
 //!     }
 //!
 //!     let game_winner = scores.check_for_winner(3).unwrap();
-//!     println!("Game Over! Winner: {}", game_winner.convert_to_string());
+//!     println!("Game Over! Winner: {}", game_winner.convert_to_string()); // will print "User" for convert_to_string()
 //! }
 //! ```
 //!
@@ -128,7 +128,7 @@ use std::io;
 /// use rock_paper_scissors::Winner;
 ///
 /// let winner = Winner::User;
-/// assert_eq!(winner.convert_to_string(), "You win!");
+/// assert_eq!(winner.convert_to_string(), "User");
 /// ```
 #[derive(Debug, PartialEq)]
 pub enum Winner {
@@ -147,7 +147,7 @@ impl Winner {
     /// use rock_paper_scissors::Winner;
     ///
     /// let winner = Winner::Enemy;
-    /// assert_eq!(winner.convert_to_string(), String::from("You lose!"));
+    /// assert_eq!(winner.convert_to_string(), String::from("Enemy"));
     /// ```
     pub fn convert_to_string(&self) -> String {
         match self {

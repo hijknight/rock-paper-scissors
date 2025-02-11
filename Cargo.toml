@@ -1,9 +1,9 @@
 [package]
 name = "rock-paper-scissors"
-license = "MIT"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Harrison Knight <hijknight@icloud.com>"]
 edition = "2021"
+license = "MIT"
 documentation = "https://docs.rs/rock-paper-scissors/0.2.5/rock_paper_scissors/"
 description = "rock-paper-scissors is an open-source Rust game API that allows users to create custom implementations of the classic game 'Rock, Paper, Scissors'."
 readme = "README.md"

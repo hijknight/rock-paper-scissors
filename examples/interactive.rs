@@ -1,13 +1,15 @@
-use rock_paper_scissors::{PlayerMoves, Scores, Winner};
+use rock_paper_scissors::{PlayerMoves, Scores, Winner, GameSettings};
 
 fn main() {
     let mut scores = Scores::new();
     let first_to = 3;
 
+    let game_settings = GameSettings::first_to_3();
+
     println!("Welcome to Rock-Paper-Scissors!");
 
     // Game loop
-    while scores.check_for_winner(3).is_err() {
+    while scores.check_for_winner(&game_settings).is_err() {
         let player_moves = PlayerMoves::build();
 
         let round_winner = player_moves.check_who_wins_round();
@@ -32,6 +34,6 @@ fn main() {
     }
 
     // Display final results
-    let game_winner = scores.check_for_winner(first_to).unwrap();
+    let game_winner = scores.check_for_winner(&game_settings).unwrap();
     println!("Game over! {}", game_winner.convert_to_string());
 }

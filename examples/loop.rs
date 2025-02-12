@@ -2,7 +2,7 @@ use rock_paper_scissors::*;
 
 
 fn main() {
-    let first_to = 3;
+    let game_settings = GameSettings::first_to_3();
 
     let mut scores = Scores::new();
 
@@ -30,7 +30,7 @@ fn main() {
             },
         }
 
-        if let Ok(winner) = scores.check_for_winner(first_to) {
+        if let Ok(winner) = scores.check_for_winner(&game_settings) {
             println!("Game Over! Winner: {}", winner.convert_to_string());
             println!();
             println!("Final Scores:");

@@ -37,7 +37,7 @@
 //!
 //! fn main() {
 //!     let mut scores = Scores::new();
-//!     let game_settings = GameSettings::first_to_3();
+//!     let game_settings = GameSettings::first_to(3);
 //!
 //!     while scores.check_for_winner(&game_settings).is_err() {
 //!         let player_moves = PlayerMoves::build();
@@ -445,7 +445,7 @@ impl Scores {
     /// ```rust
     /// use rock_paper_scissors::{Scores, Winner, GameSettings};
     ///
-    /// let game_settings: GameSettings = GameSettings::first_to_3();
+    /// let game_settings: GameSettings = GameSettings::first_to(3);
     ///
     /// let scores = Scores {
     ///     user_wins: 3,
@@ -516,7 +516,7 @@ impl Scores {
 /// ```rust
 /// use rock_paper_scissors::GameSettings;
 ///
-/// let game_settings = GameSettings::first_to_3();
+/// let game_settings = GameSettings::first_to(3);
 /// assert_eq!(game_settings.first_to, 3);
 /// ```
 ///
@@ -541,7 +541,7 @@ impl Scores {
 /// ```rust
 /// use rock_paper_scissors::{Scores, GameSettings, Winner};
 ///
-/// let game_settings = GameSettings::first_to_3();
+/// let game_settings = GameSettings::first_to(3);
 /// let mut scores = Scores::new();
 ///
 /// // Simulate some rounds
@@ -576,11 +576,13 @@ impl GameSettings {
     /// ```rust
     /// use rock_paper_scissors::GameSettings;
     ///
-    /// let settings = GameSettings::first_to_3();
+    /// let settings = GameSettings::first_to(3);
     /// assert_eq!(settings.first_to, 3);
     /// ```
-    pub fn first_to_3() -> GameSettings {
-        GameSettings { first_to: 3 }
+    pub fn first_to(first_to: u8) -> GameSettings {
+        GameSettings {
+            first_to
+        }
     }
 }
 
@@ -590,7 +592,7 @@ mod tests {
     #[test]
     fn check_for_winner_works() {
 
-        let game_settings = GameSettings::first_to_3();
+        let game_settings = GameSettings::first_to(3);
         let scores = Scores {
             user_wins: 3,
             enemy_wins: 1,

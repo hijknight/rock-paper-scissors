@@ -37,10 +37,10 @@
 //!
 //! fn main() {
 //!     let mut scores = Scores::new();
-//!     let game_settings = GameSettings::first_to(3);
+//!     let game_settings = GameSettings::from_first_to(3);
 //!
 //!     while scores.check_for_winner(&game_settings).is_err() {
-//!         let player_moves = PlayerMoves::build();
+//!         let player_moves = PlayerMoves::build_from_input();
 //!         let round_winner = player_moves.check_who_wins_round();
 //!
 //!         match round_winner {
@@ -251,7 +251,9 @@ impl MoveType {
         println!("Enter your move: (1 = Rock, 2 = Paper, 3 = Scissors)");
         let mut user_input = String::new();
 
-        io::stdin().read_line(&mut user_input).expect("Failed to read line");
+        io::stdin()
+            .read_line(&mut user_input)
+            .expect("Failed to read line");
 
         match user_input.trim().parse::<u8>() {
             Ok(1) => Ok(MoveType::Rock),
@@ -279,7 +281,7 @@ impl MoveType {
 /// ## Methods
 ///
 /// - **`PlayerMoves::new()`**: Safely initializes a `PlayerMoves` instance with both moves set to `MoveType::None`.
-/// - **`PlayerMoves::build()`**: Builds a new `PlayerMoves` instance by getting the user's input and randomly generating the enemy's move.
+/// - **`PlayerMoves::build_from_input()`**: Builds a new `PlayerMoves` instance by getting the user's input and randomly generating the enemy's move.
 /// - **`PlayerMoves::check_who_wins_round()`**: Determines the winner of the round based on the moves.
 ///
 /// ## Examples
@@ -345,9 +347,9 @@ impl PlayerMoves {
     /// ```rust
     /// use rock_paper_scissors::{PlayerMoves, MoveType};
     ///
-    /// // let player_moves = PlayerMoves::build();
+    /// // let player_moves = PlayerMoves::build_from_input();
     ///
-    /// // the build function takes user input, so this is an example output.
+    /// // the build_from_input function takes user input, so this is an example output.
     ///
     /// let player_moves = PlayerMoves {
     ///     user_move: MoveType::Rock,
@@ -357,10 +359,10 @@ impl PlayerMoves {
     /// assert_eq!(player_moves.user_move, MoveType::Rock);
     /// assert_eq!(player_moves.enemy_move, MoveType::Scissors);
     /// ```
-    pub fn build() -> PlayerMoves {
+    pub fn build_from_input() -> PlayerMoves {
         let user_move = loop {
             match MoveType::from_user_input() {
-                Ok(move_type) => break move_type,
+                Ok(m) => break m,
                 Err(e) => println!("{}", e),
             }
         };
@@ -445,7 +447,7 @@ impl Scores {
     /// ```rust
     /// use rock_paper_scissors::{Scores, Winner, GameSettings};
     ///
-    /// let game_settings: GameSettings = GameSettings::first_to(3);
+    /// let game_settings: GameSettings = GameSettings::from_first_to(3);
     ///
     /// let scores = Scores {
     ///     user_wins: 3,
@@ -494,20 +496,20 @@ impl Scores {
 ///
 /// ## Fields
 ///
-/// - `first_to`
+/// - `from_first_to`
 ///   - Specifies the number of round wins required for either the user or opponent to win the game.
 ///   - This value defaults to `0` when initializing using `GameSettings::new()`.
 ///
 /// ## Methods
 ///
 /// ### `GameSettings::new()`
-/// Creates a new `GameSettings` instance with `first_to` set to `0`. This can act as a placeholder until specific settings are defined.
+/// Creates a new `GameSettings` instance with `from_first_to` set to `0`. This can act as a placeholder until specific settings are defined.
 ///
 /// ```rust
 /// use rock_paper_scissors::GameSettings;
 ///
 /// let game_settings = GameSettings::new();
-/// assert_eq!(game_settings.first_to, 0);
+/// assert_eq!(game_settings.first_to, 1);
 /// ```
 ///
 /// ### `GameSettings::first_to_3()`
@@ -516,7 +518,7 @@ impl Scores {
 /// ```rust
 /// use rock_paper_scissors::GameSettings;
 ///
-/// let game_settings = GameSettings::first_to(3);
+/// let game_settings = GameSettings::from_first_to(3);
 /// assert_eq!(game_settings.first_to, 3);
 /// ```
 ///
@@ -541,7 +543,7 @@ impl Scores {
 /// ```rust
 /// use rock_paper_scissors::{Scores, GameSettings, Winner};
 ///
-/// let game_settings = GameSettings::first_to(3);
+/// let game_settings = GameSettings::from_first_to(3);
 /// let mut scores = Scores::new();
 ///
 /// // Simulate some rounds
@@ -557,17 +559,87 @@ pub struct GameSettings {
 }
 
 impl GameSettings {
-    /// Creates a new game configuration with the default `first_to` value of `0`.
+    /// Creates a new game configuration with the default `from_first_to` value of `1`.
     ///
     /// ## Examples
     /// ```rust
     /// use rock_paper_scissors::GameSettings;
     ///
     /// let settings = GameSettings::new();
-    /// assert_eq!(settings.first_to, 0);
+    /// assert_eq!(settings.first_to, 1);
     /// ```
     pub fn new() -> GameSettings {
-        GameSettings { first_to: 0 }
+        GameSettings { first_to: 1 }
+    }
+
+    /// The `from_user_input` method allows users to customize the game settings by
+    /// providing input for the `first_to` win condition. The number entered defines how many
+    /// victories are required to declare a winner in the game session.
+    ///
+    /// ## Description
+    ///
+    /// - This function prompts the user to input a number (representing the target win count).
+    /// - It validates the input to ensure it's a valid positive integer (`u8`).
+    /// - If the input is valid, it returns a `GameSettings` instance with the `first_to` property set
+    ///   to the input value.
+    /// - In case of invalid input, such as non-numeric values or parsing errors, it returns an error
+    ///   message.
+    ///
+    /// ## Behavior
+    ///
+    /// - Reads a line of input from the console.
+    /// - Tries to parse the trimmed input into a `u8` number.
+    /// - If parsing succeeds:
+    ///     - The parsed number is assigned to the `first_to` field of the `GameSettings` struct.
+    ///     - Returns `Ok(GameSettings)`.
+    /// - If parsing fails:
+    ///     - Returns an error with a descriptive message (e.g., `"Invalid input. Please enter a number."`).
+    ///
+    /// ## Use Case
+    ///
+    /// This method is designed to make game initialization interactive by letting users define the win
+    /// condition directly from the console. For example, users can adjust how many game rounds they
+    /// need to win to end the game.
+    ///
+    /// ## Examples
+    ///
+    /// ### Correct Input
+    ///
+    /// When valid input is provided:
+    /// ```rust
+    /// use rock_paper_scissors::GameSettings;
+    ///
+    /// // Simulating valid user input:
+    /// // Let's say user enters "5" (first to 5 wins).
+    /// // let game_settings = GameSettings::from_user_input();
+    /// // returns the following:
+    /// let game_settings: Result<GameSettings, &'static str> = Ok(GameSettings {
+    ///     first_to: 5,
+    /// });
+    /// match game_settings {
+    ///     Ok(settings) => assert_eq!(settings.first_to, 5),
+    ///     Err(_) => panic!("This should not happen for valid input"),
+    /// }
+    /// ```
+    ///
+    /// ### Invalid Input
+    ///
+    /// Example of invalid
+    pub fn from_user_input() -> Result<GameSettings, &'static str> {
+        let mut game_settings = GameSettings::new();
+        let mut user_input = String::new();
+
+        io::stdin()
+            .read_line(&mut user_input)
+            .expect("Failed to read line");
+
+        match user_input.trim().parse::<u8>() {
+            Ok(first_to) => {
+                game_settings.first_to = first_to;
+                Ok(game_settings)
+            },
+            Err(_) => Err("Invalid input. Please enter a number.")
+        }
     }
 
     /// Prebuilt configuration where the first player to win 3 rounds is declared the winner.
@@ -576,10 +648,10 @@ impl GameSettings {
     /// ```rust
     /// use rock_paper_scissors::GameSettings;
     ///
-    /// let settings = GameSettings::first_to(3);
+    /// let settings = GameSettings::from_first_to(3);
     /// assert_eq!(settings.first_to, 3);
     /// ```
-    pub fn first_to(first_to: u8) -> GameSettings {
+    pub fn from_first_to(first_to: u8) -> GameSettings {
         GameSettings {
             first_to
         }
@@ -592,7 +664,7 @@ mod tests {
     #[test]
     fn check_for_winner_works() {
 
-        let game_settings = GameSettings::first_to(3);
+        let game_settings = GameSettings::from_first_to(3);
         let scores = Scores {
             user_wins: 3,
             enemy_wins: 1,

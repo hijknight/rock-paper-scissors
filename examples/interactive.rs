@@ -2,7 +2,6 @@ use rock_paper_scissors::{PlayerMoves, Scores, Winner, GameSettings};
 
 fn main() {
     let mut scores = Scores::new();
-    let first_to = 3;
 
     let game_settings = GameSettings::first_to_3();
 

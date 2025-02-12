@@ -1,95 +1,47 @@
-//! # Rock-paper-scissors
+//! # Rock-Paper-Scissors Game Library
 //!
-//! `rock-paper-scissors` is an open-source Rust game API that allows users to create custom implementations of the classic game "Rock, Paper, Scissors".
+//! Welcome to the **Rock-Paper-Scissors** game library, a simple and flexible Rust-based crate for implementing the classic "Rock, Paper, Scissors" game.
+//! This crate is designed to simplify the development of both console-based and programmatic versions of the game, featuring customizable rules,
+//! user input handling, game settings, and score tracking utilities.
 //!
-//! ## Features
+//! ## Key Features
 //!
-//! - Fully customizable logic for handling moves and determining winners.
-//! - Built-in functions to simplify gameplay mechanics, such as move generation, winner determination, and score tracking.
-//! - Enum-based design for safety and clarity.
-//! - End-to-end examples and tests for ease of use and reliability.
+//! - **Move Management**: Enum-based moves (`Rock`, `Paper`, `Scissors`) for safe and clear gameplay logic.
+//! - **Game Logic**: Easily determine winners for rounds and track scores across an entire game session.
+//! - **Settings and Customization**: Includes prebuilt and customizable configurations, such as "first to X wins".
+//! - **Error Handling**: Built-in validations to ensure valid moves and game states.
+//! - **Randomization**: Utilities for generating random enemy moves.
 //!
-//! ## Crate Structure
+//! ## Core Components
 //!
-//! This crate provides the following core components:
+//! 1. **MoveType Enum**
+//!    Represents the possible game moves: `Rock`, `Paper`, or `Scissors`. Includes utilities for generating randomized moves and representing moves as strings.
 //!
-//! 1. **Winner Enum**
-//!    Represents the result of a game round or the match.
-//!    - `Winner::Tie`: Indicates a tie between the user and the enemy.
-//!    - `Winner::User`: Indicates a win for the user.
-//!    - `Winner::Enemy`: Indicates a win for the enemy.
-//!
-//!    ```rust
-//!    use rock_paper_scissors::Winner;
-//!
-//!    let winner = Winner::User;
-//!    println!("{}", winner.convert_to_string()); // "User"
-//!    ```
-//!
-//! 2. **MoveType Enum**
-//!    Represents the possible moves in the game: `Rock`, `Paper`, or `Scissors`. Includes utilities for creating random moves and converting moves to printable `String` values.
-//!
-//!    ```rust
-//!    use rock_paper_scissors::MoveType;
-//!
-//!    let random_move = MoveType::random_move(); // Generates a random move
-//!    let move_name = random_move.convert_to_string(); // Converts the move to a string
-//!    println!("{}", move_name); // e.g., "Rock"
-//!    ```
+//! 2. **Winner Enum**
+//!    Encapsulates the result of each round, allowing easily distinguishable states: `User`, `Enemy`, or `Tie`.
 //!
 //! 3. **PlayerMoves Struct**
-//!    Bundles the user and enemy moves for a round. Also provides functionality to determine the round winner based on the moves.
-//!
-//!    ```rust
-//!    use rock_paper_scissors::{PlayerMoves, MoveType, Winner};
-//!
-//!    let player_moves = PlayerMoves {
-//!        user_move: MoveType::Rock,
-//!        enemy_move: MoveType::Scissors,
-//!    };
-//!
-//!    let round_winner = player_moves.check_who_wins_round();
-//!    assert_eq!(round_winner, Winner::User);
-//!    ```
+//!    Captures the moves made by the user and the opponent in a single round. Provides functionality to determine the winner of that round.
 //!
 //! 4. **Scores Struct**
-//!    Tracks the cumulative scores for the user and enemy in a game session. Allows checking whether the game has a winner based on predefined win conditions (e.g., first to 3 wins).
+//!    Tracks the cumulative scores of a session and provides methods to check if there's an overall winner based on predefined game settings.
 //!
-//!    ```rust
-//!    use rock_paper_scissors::{Scores, Winner};
-//!
-//!    let mut scores = Scores::new();
-//!    scores.user_wins += 1;
-//!
-//!    let winner = scores.check_for_winner(3);
-//!    assert!(winner.is_err()); // No winner yet
-//!    ```
-//!
-//! 5. **User Input and Integration**
-//!    Provides utilities to collect and validate user input for moves in a console-based setup.
-//!
-//!    ```no_run
-//!    use rock_paper_scissors::{PlayerMoves, MoveType};
-//!
-//!    let user_move = MoveType::from_user_input();
-//!    println!("You chose: {}", user_move.unwrap().convert_to_string());
-//!    ```
+//! 5. **GameSettings Struct**
+//!    Offers customizable configurations for game-winning conditions, such as "first to 3 wins" or other scenarios.
 //!
 //! ## Example Usage
+//! Create and run a short game loop of "Rock, Paper, Scissors":
 //!
-//! Below is an example of a simple game loop using the `rock-paper-scissors` library:
-//!
-//! ```rust
-//! use rock_paper_scissors::{ PlayerMoves, Scores, Winner };
+//! ```no_run
+//! use rock_paper_scissors::{PlayerMoves, Scores, Winner, GameSettings};
 //!
 //! fn main() {
 //!     let mut scores = Scores::new();
+//!     let game_settings = GameSettings::first_to_3();
 //!
-//!     while scores.check_for_winner(3).is_err() {
+//!     while scores.check_for_winner(&game_settings).is_err() {
 //!         let player_moves = PlayerMoves::build();
-//!
 //!         let round_winner = player_moves.check_who_wins_round();
-//!         println!("Round result: {}", round_winner.convert_to_string());
 //!
 //!         match round_winner {
 //!             Winner::User => scores.user_wins += 1,
@@ -100,16 +52,17 @@
 //!         println!("Scores -> User: {}, Enemy: {}", scores.user_wins, scores.enemy_wins);
 //!     }
 //!
-//!     let game_winner = scores.check_for_winner(3).unwrap();
-//!     println!("Game Over! Winner: {}", game_winner.convert_to_string()); // will print "User" for convert_to_string()
+//!     let game_winner = scores.check_for_winner(&game_settings).unwrap();
+//!     println!("Game Winner: {}", game_winner.convert_to_string());
 //! }
 //! ```
 //!
-//! ## Error Handling
+//! ## Crate Philosophy
+//! This library focuses on simplicity and flexibility, making it perfect for both beginner and intermediate Rust developers learning game development. It
+//! provides clear interfaces and utilities while ensuring essential safeguards to avoid runtime errors.
 //!
-//! The crate provides robust error handling for invalid user moves and incomplete game states:
-//! - Ensures valid move input from users.
-//! - Fails gracefully with descriptive errors when conditions (like 3 wins required to finish the game) are not met.
+//! ## Contributing
+//! Contributions such as bug fixing, feature additions, and code improvements are welcome! Please read the [contribution guidelines](#) for more details.
 
 use rand::Rng;
 use std::io;
@@ -490,19 +443,21 @@ impl Scores {
     /// # Examples
     ///
     /// ```rust
-    /// use rock_paper_scissors::{Scores, Winner};
+    /// use rock_paper_scissors::{Scores, Winner, GameSettings};
+    ///
+    /// let game_settings: GameSettings = GameSettings::first_to_3();
     ///
     /// let scores = Scores {
     ///     user_wins: 3,
     ///     enemy_wins: 2,
     /// };
     ///
-    /// assert_eq!(scores.check_for_winner(3), Ok(Winner::User));
+    /// assert_eq!(scores.check_for_winner(&game_settings), Ok(Winner::User));
     /// ```
-    pub fn check_for_winner(&self, first_to: u8) -> Result<Winner, &str> {
-        if self.user_wins == first_to {
+    pub fn check_for_winner(&self, game_settings: &GameSettings) -> Result<Winner, &str> {
+        if self.user_wins == game_settings.first_to {
             Ok(Winner::User)
-        } else if self.enemy_wins == first_to {
+        } else if self.enemy_wins == game_settings.first_to {
             Ok(Winner::Enemy)
         } else {
             Err("rock-paper-scissors: err: No winner yet")
@@ -532,31 +487,130 @@ impl Scores {
     }
 }
 
+/// # GameSettings Struct
+///
+/// The `GameSettings` struct provides a simple yet flexible mechanism to configure the win conditions for a "Rock, Paper, Scissors" game session.
+/// It allows developers to define the number of wins required to declare an overall game winner.
+///
+/// ## Fields
+///
+/// - `first_to`
+///   - Specifies the number of round wins required for either the user or opponent to win the game.
+///   - This value defaults to `0` when initializing using `GameSettings::new()`.
+///
+/// ## Methods
+///
+/// ### `GameSettings::new()`
+/// Creates a new `GameSettings` instance with `first_to` set to `0`. This can act as a placeholder until specific settings are defined.
+///
+/// ```rust
+/// use rock_paper_scissors::GameSettings;
+///
+/// let game_settings = GameSettings::new();
+/// assert_eq!(game_settings.first_to, 0);
+/// ```
+///
+/// ### `GameSettings::first_to_3()`
+/// Provides a predefined configuration where the game is set to end after 3 wins from either the user or the opponent.
+///
+/// ```rust
+/// use rock_paper_scissors::GameSettings;
+///
+/// let game_settings = GameSettings::first_to_3();
+/// assert_eq!(game_settings.first_to, 3);
+/// ```
+///
+/// ## Examples
+///
+/// ### Using Custom Win Conditions
+/// Developers can define their own win conditions by directly instantiating the `GameSettings` struct:
+///
+/// ```rust
+/// use rock_paper_scissors::GameSettings;
+///
+/// let custom_game_settings = GameSettings {
+///     first_to: 5,
+/// };
+///
+/// assert_eq!(custom_game_settings.first_to, 5);
+/// ```
+///
+/// ### Combining with Scores
+/// The `GameSettings` struct is designed to work seamlessly with the `Scores` struct to determine if a game session has reached its end:
+///
+/// ```rust
+/// use rock_paper_scissors::{Scores, GameSettings, Winner};
+///
+/// let game_settings = GameSettings::first_to_3();
+/// let mut scores = Scores::new();
+///
+/// // Simulate some rounds
+/// scores.user_wins = 3;
+///
+/// // Check for game winner
+/// let winner = scores.check_for_winner(&game_settings);
+/// assert_eq!(winner, Ok(Winner::User));
+/// ```
+#[derive(Debug, PartialEq)]
+pub struct GameSettings {
+    pub first_to: u8,
+}
+
+impl GameSettings {
+    /// Creates a new game configuration with the default `first_to` value of `0`.
+    ///
+    /// ## Examples
+    /// ```rust
+    /// use rock_paper_scissors::GameSettings;
+    ///
+    /// let settings = GameSettings::new();
+    /// assert_eq!(settings.first_to, 0);
+    /// ```
+    pub fn new() -> GameSettings {
+        GameSettings { first_to: 0 }
+    }
+
+    /// Prebuilt configuration where the first player to win 3 rounds is declared the winner.
+    ///
+    /// ## Examples
+    /// ```rust
+    /// use rock_paper_scissors::GameSettings;
+    ///
+    /// let settings = GameSettings::first_to_3();
+    /// assert_eq!(settings.first_to, 3);
+    /// ```
+    pub fn first_to_3() -> GameSettings {
+        GameSettings { first_to: 3 }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     #[test]
     fn check_for_winner_works() {
+
+        let game_settings = GameSettings::first_to_3();
         let scores = Scores {
             user_wins: 3,
             enemy_wins: 1,
         };
 
-        assert_eq!(scores.check_for_winner(3), Ok(Winner::User));
+        assert_eq!(scores.check_for_winner(&game_settings), Ok(Winner::User));
 
         let scores = Scores {
             user_wins: 2,
             enemy_wins: 3
         };
 
-        assert_eq!(scores.check_for_winner(3), Ok(Winner::Enemy));
+        assert_eq!(scores.check_for_winner(&game_settings), Ok(Winner::Enemy));
 
         let scores = Scores {
             user_wins: 1,
             enemy_wins: 0,
         };
 
-        assert_eq!(scores.check_for_winner(3), Err("rock-paper-scissors: err: No winner yet"));
+        assert_eq!(scores.check_for_winner(&game_settings), Err("rock-paper-scissors: err: No winner yet"));
     }
 
     #[test]

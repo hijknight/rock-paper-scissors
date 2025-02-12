@@ -2,7 +2,7 @@
 
 [![Crates.io Version](https://img.shields.io/crates/v/rock-paper-scissors)](https://crates.io/crates/rock-paper-scissors)
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/hijknight/rock-paper-scissors/rust.yml)](https://github.com/hijknight/rock-paper-scissors/actions)
-[![docs.rs](https://img.shields.io/docsrs/rock-paper-scissors)](https://docs.rs/rock-paper-scissors/0.3.3/rock_paper_scissors/)
+[![docs.rs](https://img.shields.io/docsrs/rock-paper-scissors)](https://docs.rs/rock-paper-scissors/0.4.2/rock_paper_scissors/)
 ![Rust](https://img.shields.io/badge/rust-1.84.1-blue)
 
 `rock-paper-scissors` is an open-source Rust library and interactive game designed for developers to create or customize implementations of the classic "Rock, Paper, Scissors" game. It adheres to **clean design principles**, offering modular functionality, safe initialization, and robust error handling.
@@ -51,7 +51,7 @@ To use the `rock-paper-scissors` library in your project, include it in your `Ca
 
 ```toml
 [dependencies]
-rock-paper-scissors = "0.4.1"
+rock-paper-scissors = "0.4.2"
 ```
 
 For the interactive game:

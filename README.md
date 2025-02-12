@@ -9,30 +9,49 @@
 
 ---
 
+## What's New in the Latest Update?
+
+- **Enhancements to `MoveType`**:
+  - Improved handling of edge cases for move validation.
+  - Streamlined methods for better performance when generating random moves.
+
+- **Improved User Messaging**:
+  - Enhanced text clarity for both game results and input prompts.
+
+- **Game Customization**:
+  - Added support for additional game-winning conditions beyond "first to X wins."
+  - Updated `GameSettings` to support user-defined conditions with enhanced flexibility.
+
+- **Error Handling Overhaul**:
+  - Cleaner and more detailed error messages for invalid user inputs or unexpected states.
+
+- **Code Quality Improvements**:
+  - Internal optimizations for better performance and reduced memory usage.
+
+---
+
 ## Features
 
 ### Library Highlights
 - **Customizable Game Logic**:
   - Enums and structs encapsulate game logic for modularity and easy customization.
-  - New `MoveType::None` variant ensures safe initialization for moves.
-  - Methods like `MoveType::random_move` simplify randomization, while `MoveType::from_user_input` handles inputs gracefully.
+  - Safe initialization with robust handling of invalid states or inputs.
 - **Winner Determination**:
   - Built-in logic determines the winner of each round with clear rules (`PlayerMoves::check_who_wins_round`).
 - **Score Management**:
   - Tracks user and enemy wins during the game with a `Scores` struct.
   - Allows checking the game's end (`Scores::check_for_winner`) or resetting (`Scores::reset`).
-- **Safe Initialization**:
-  - The `PlayerMoves::new` method initializes moves (`user_move` and `enemy_move`) as `MoveType::None`, reducing errors during uninitialized states.
 - **Game Settings**:
-  - The `GameSettings` struct allows developers to configure customizable game-winning conditions, such as "first to X wins."
-  - A prebuilt configuration `GameSettings::first_to_3()` is included for quick usage.
-- **Friendly Output Utilities**:
-  - Human-readable string conversion for enums like `MoveType` and `Winner` provides better readability and interaction.
+  - Enhanced capabilities for configuring win conditions and gameplay mechanics.
+  - Prebuilt configurations like `GameSettings::first_to(first_to)` for quick usage.
+- **User-Friendly Output**:
+  - Updated message templates for better clarity and user engagement.
+  - Human-readable string conversions for enums like `MoveType` and `Winner`.
 
 ### Game Highlights
-- Interactive gameplay through `MoveType::from_user_input()` for user moves.
-- Head-to-head matches with a randomly generated opponent.
-- Input validation ensures smooth, error-free gameplay.
+- Dynamic and interactive gameplay with robust input validation.
+- Enhanced game flexibility with customizable rule settings.
+- Detailed round-by-round results and score updates.
 
 ---
 
@@ -42,7 +61,7 @@
 
 To use or play the `rock-paper-scissors` library, ensure you have the following installed:
 
-- Rust (v1.64 or higher)
+- Rust (v1.84 or higher)
 - Cargo, for building and running the library or game.
 
 ### Installation
@@ -75,68 +94,40 @@ For the interactive game:
 #### **Enums**
 
 1. **Winner**
-- Represents round outcomes: `User`, `Enemy`, or `Tie`.
-- Includes `Winner::convert_to_string` for clear textual output.  
-  Example output: `"You win!"` or `"You lose!"`.
+  - Represents round outcomes: `User`, `Enemy`, or `Tie`.
+  - Converts results into user-readable messages (e.g., `"You win!"`).
 
 2. **MoveType**
-- Represents available moves (`Rock`, `Paper`, `Scissors`) and includes a new variant:
-  - **`MoveType::None`**: Represents an uninitialized state or invalid move, ensuring safe initialization.
-- Key methods:
-  - **`MoveType::random_move`**: Generates a random move for non-interactive gameplay.
-  - **`MoveType::from_user_input`**: Validates and converts user input to move types.
-  - **`MoveType::convert_to_string`**: Converts moves (like `MoveType::Rock`) into a human-readable format (`"Rock"`).
+  - Represents available moves and includes a variant for uninitialized states (`None`).
+  - Methods for generating random moves and handling user input:
+    - `random_move`: Randomly selects a valid move.
+    - `from_user_input`: Validates and converts user input to moves.
 
 #### **Structs**
 
 1. **PlayerMoves**
-- Bundles the user's and the enemy's moves for a single round.
-- Features:
-  - **`PlayerMoves::new`**: Initializes moves as `MoveType::None` for safe usage.
-  - **`PlayerMoves::check_who_wins_round`**: Determines the round winner.
-  - **`PlayerMoves::build`**: Completes initialization with user input and a random enemy move.
+  - Tracks moves for user and enemy, ensuring safe initialization and comparison.
+  - Determines round winners and completes setup with helper methods (`build`).
 
 2. **Scores**
-- Tracks the cumulative wins for both the user and the enemy.
-- Features:
-  - **`Scores::check_for_winner`**: Determines if a player has reached the game's win condition (e.g., first to a certain number of wins).
-  - **`Scores::reset`**: Resets scores for a new game.
+  - Tracks user and enemy wins and checks for game-winning conditions.
 
 3. **GameSettings**
-- Facilitates customizable game-winning conditions.
-- Features:
-  - `first_to` field: Specifies the number of wins required to end the game.
-  - **`GameSettings::new`**: Creates a `GameSettings` instance with default configurable values.
-  - **`GameSettings::first_to_3`**: Predefined configuration for a game set to "first to 3 wins."
-
-**Example:**
-
-```rust
-use rock_paper_scissors::{Scores, GameSettings, Winner};
-
-let game_settings = GameSettings::first_to_3();
-let mut scores = Scores::new();
-
-// Simulate some rounds
-scores.user_wins = 3;
-
-// Check for game winner
-let winner = scores.check_for_winner(&game_settings);
-assert_eq!(winner, Ok(Winner::User));
-```
+  - Configures customized or predefined game-winning conditions.
+  - Now supports more flexible rulesets for advanced customization.
 
 ---
 
 ## Playing the Game
 
-Here’s an interactive example of how to play a game of Rock-Paper-Scissors using the library:
+Here’s an example of how to play a game of Rock-Paper-Scissors:
 
 ```rust
 use rock_paper_scissors::{PlayerMoves, Scores, Winner, MoveType, GameSettings};
 
 fn main() {
   let mut scores = Scores::new();
-  let game_settings = GameSettings::first_to_3();
+  let game_settings = GameSettings::first_to(5); // Play until one player wins 5 rounds.
 
   println!("Welcome to Rock-Paper-Scissors!");
 
@@ -165,9 +156,8 @@ fn main() {
     );
   }
 
-  // Display final results
-  let game_winner = scores.check_for_winner(&game_settings).unwrap();
-  println!("Game over! {}", game_winner.convert_to_string());
+  let winner = scores.check_for_winner(&game_settings).unwrap();
+  println!("Game over! {}", winner.convert_to_string());
 }
 ```
 
@@ -175,11 +165,13 @@ fn main() {
 
 ## Error Handling
 
+The library includes robust error handling:
+
 ### Key Error Scenarios
-- **Invalid user input**:
-  - If the player enters invalid input (e.g., letters, out-of-range numbers), the game reprompts them via `MoveType::from_user_input`.
-- **Uninitialized states**:
-  - The `MoveType::None` variant prevents invalid states during custom logic or gameplay setup.
+- **Invalid User Input**:
+  - If the player enters invalid input (e.g., non-recognizable commands), the game reprompts using detailed error messages.
+- **Edge Cases**:
+  - Custom validations prevent unexpected behaviors in uninitialized or edge states.
 
 ---
 

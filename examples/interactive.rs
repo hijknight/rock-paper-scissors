@@ -3,13 +3,13 @@ use rock_paper_scissors::{PlayerMoves, Scores, Winner, GameSettings};
 fn main() {
     let mut scores = Scores::new();
 
-    let game_settings = GameSettings::first_to_3();
+    let game_settings = GameSettings::from_first_to(3);
 
     println!("Welcome to Rock-Paper-Scissors!");
 
     // Game loop
     while scores.check_for_winner(&game_settings).is_err() {
-        let player_moves = PlayerMoves::build();
+        let player_moves = PlayerMoves::build_from_input();
 
         let round_winner = player_moves.check_who_wins_round();
         println!(

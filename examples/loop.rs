@@ -2,7 +2,7 @@ use rock_paper_scissors::*;
 
 
 fn main() {
-    let game_settings = GameSettings::first_to_3();
+    let game_settings = GameSettings::from_first_to(3);
 
     let mut scores = Scores::new();
 
@@ -10,7 +10,7 @@ fn main() {
 
     loop {
         round_counter += 1;
-        let player_moves = PlayerMoves::build();
+        let player_moves = PlayerMoves::build_from_input();
 
         let winner = player_moves.check_who_wins_round();
 

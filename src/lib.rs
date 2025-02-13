@@ -340,7 +340,7 @@ impl PlayerMoves {
     ///
     /// # Warning
     ///
-    /// Requires `get_user_move` to be used for user input.
+    /// Requires `build_from_input` to be used for user input.
     ///
     /// # Examples
     ///

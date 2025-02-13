@@ -633,7 +633,7 @@ impl GameSettings {
             .read_line(&mut user_input)
             .expect("Failed to read line");
 
-        match user_input.trim().parse::<u8>() {
+        match user_input.trim().parse::<u8>() { // Result<u8, _>
             Ok(first_to) => {
                 game_settings.first_to = first_to;
                 Ok(game_settings)
@@ -760,4 +760,7 @@ mod tests {
             enemy_move: MoveType::None,
         })
     }
+
+
+
 }

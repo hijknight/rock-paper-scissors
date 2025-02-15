@@ -2,7 +2,7 @@
 
 [![Crates.io Version](https://img.shields.io/crates/v/rock-paper-scissors)](https://crates.io/crates/rock-paper-scissors)
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/hijknight/rock-paper-scissors/rust.yml)](https://github.com/hijknight/rock-paper-scissors/actions)
-[![docs.rs](https://img.shields.io/docsrs/rock-paper-scissors)](https://docs.rs/rock-paper-scissors/0.4.3/rock_paper_scissors/)
+[![docs.rs](https://img.shields.io/docsrs/rock-paper-scissors)](https://docs.rs/rock-paper-scissors/0.5.0/rock_paper_scissors/)
 ![Rust](https://img.shields.io/badge/rust-1.84.1-blue)
 
 `rock-paper-scissors` is an open-source Rust library and interactive game designed for developers to create or customize implementations of the classic "Rock, Paper, Scissors" game. It adheres to **clean design principles**, offering modular functionality, safe initialization, and robust error handling.
@@ -15,18 +15,21 @@
   - Improved handling of edge cases for move validation.
   - Streamlined methods for better performance when generating random moves.
 
-- **Improved User Messaging**:
-  - Enhanced text clarity for both game results and input prompts.
+- **User Experience Improvements**:
+  - Enhanced messaging for both game results and input prompts to improve clarity.
 
-- **Game Customization**:
-  - Added support for additional game-winning conditions beyond "first to X wins."
-  - Updated `GameSettings` to support user-defined conditions with enhanced flexibility.
+- **Expanded Customization**:
+  - Support for custom game-winning conditions, allowing advanced configurations beyond "first to X wins."
+  - `GameSettings` now supports user-defined rules with increased flexibility.
 
 - **Error Handling Overhaul**:
-  - Cleaner and more detailed error messages for invalid user inputs or unexpected states.
+  - Enhanced error messages providing clear guidance for invalid user inputs or unexpected situations.
 
-- **Code Quality Improvements**:
-  - Internal optimizations for better performance and reduced memory usage.
+- **Performance & Code Quality**:
+  - Internal optimizations for faster processing and reduced memory overhead.
+
+- **Library Version Update**:
+  - Now compatible with Rust 1.84.1 for better performance and reliability.
 
 ---
 
@@ -36,22 +39,26 @@
 - **Customizable Game Logic**:
   - Enums and structs encapsulate game logic for modularity and easy customization.
   - Safe initialization with robust handling of invalid states or inputs.
-- **Winner Determination**:
-  - Built-in logic determines the winner of each round with clear rules (`PlayerMoves::check_who_wins_round`).
-- **Score Management**:
-  - Tracks user and enemy wins during the game with a `Scores` struct.
-  - Allows checking the game's end (`Scores::check_for_winner`) or resetting (`Scores::reset`).
+
+- **Flexible Winner Determination**:
+  - Built-in logic to evaluate round outcomes with the `PlayerMoves::check_who_wins_round` method.
+
+- **Score Tracking**:
+  - Tracks user and enemy wins with the `Scores` struct.
+  - Supports checking game-winning conditions (`Scores::check_for_winner`) or resetting scores (`Scores::reset`).
+
 - **Game Settings**:
-  - Enhanced capabilities for configuring win conditions and gameplay mechanics.
-  - Prebuilt configurations like `GameSettings::first_to(first_to)` for quick usage.
-- **User-Friendly Output**:
-  - Updated message templates for better clarity and user engagement.
-  - Human-readable string conversions for enums like `MoveType` and `Winner`.
+  - New support for user-defined gameplay rules and conditions.
+  - Prebuilt configurations like `GameSettings::first_to(first_to)` for quick and easy implementation.
+
+- **Output Improvements**:
+  - Human-readable string conversions for enums, such as `MoveType` and `Winner`.
+  - Updated message templates ensure intuitive and engaging player interactions.
 
 ### Game Highlights
-- Dynamic and interactive gameplay with robust input validation.
-- Enhanced game flexibility with customizable rule settings.
-- Detailed round-by-round results and score updates.
+- Interactive gameplay with robust input validation.
+- Flexible rules, supporting custom winning conditions and gameplay mechanics.
+- Detailed round-by-round results and score summaries for an engaging player experience.
 
 ---
 
@@ -59,28 +66,29 @@
 
 ### Prerequisites
 
-To use or play the `rock-paper-scissors` library, ensure you have the following installed:
+To use or play the `rock-paper-scissors` library, ensure the following are installed:
 
-- Rust (v1.84 or higher)
-- Cargo, for building and running the library or game.
+- **Rust** (v1.84.1 or higher)
+- **Cargo**, for building and running the library or game.
 
 ### Installation
 
-To use the `rock-paper-scissors` library in your project, include it in your `Cargo.toml`:
+To use the library in your Rust project, add the following line to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-rock-paper-scissors = "0.4.3"
+rock-paper-scissors = "0.5.0"
 ```
 
-For the interactive game:
+To play the game directly:
 
 1. Clone the repository:
    ```bash
    git clone https://github.com/hijknight/rock-paper-scissors.git
    cd rock-paper-scissors
    ```
-2. Run the game using Cargo:
+
+2. Run the game with Cargo:
    ```bash
    cargo run
    ```
@@ -93,57 +101,55 @@ For the interactive game:
 
 #### **Enums**
 
-1. **Winner**
+1. **`Winner`**
   - Represents round outcomes: `User`, `Enemy`, or `Tie`.
-  - Converts results into user-readable messages (e.g., `"You win!"`).
+  - Converts results into user-readable messages.
 
-2. **MoveType**
-  - Represents available moves and includes a variant for uninitialized states (`None`).
-  - Methods for generating random moves and handling user input:
-    - `random_move`: Randomly selects a valid move.
-    - `from_user_input`: Validates and converts user input to moves.
+2. **`MoveType`**
+  - Represents available moves (e.g., Rock, Paper, Scissors) with an uninitialized state (`None`).
+  - Utility methods:
+    - `random_move`: Generates a random move.
+    - `from_user_input`: Validates and converts strings to moves.
 
 #### **Structs**
 
-1. **PlayerMoves**
-  - Tracks moves for user and enemy, ensuring safe initialization and comparison.
-  - Determines round winners and completes setup with helper methods (`build`).
+1. **`PlayerMoves`**
+  - Tracks user and enemy moves.
+  - Provides helper methods for initialization (`build`) and winner determination.
 
-2. **Scores**
-  - Tracks user and enemy wins and checks for game-winning conditions.
+2. **`Scores`**
+  - Records scores and validates game-winning conditions.
 
-3. **GameSettings**
-  - Configures customized or predefined game-winning conditions.
-  - Now supports more flexible rulesets for advanced customization.
+3. **`GameSettings`**
+  - Allows configuration of gameplay rules, such as custom win conditions.
 
 ---
 
 ## Playing the Game
 
-Here’s an example of how to play a game of Rock-Paper-Scissors:
+Here's a simple example of playing Rock-Paper-Scissors programmatically:
 
 ```rust
 use rock_paper_scissors::{PlayerMoves, Scores, Winner, MoveType, GameSettings};
 
 fn main() {
   let mut scores = Scores::new();
-  let game_settings = GameSettings::first_to(5); // Play until one player wins 5 rounds.
+  let game_settings = GameSettings::first_to(3); // First to 3 wins.
 
   println!("Welcome to Rock-Paper-Scissors!");
 
-  // Game loop
   while scores.check_for_winner(&game_settings).is_err() {
     let player_moves = PlayerMoves::build();
 
     let round_winner = player_moves.check_who_wins_round();
     println!(
-      "You chose {}. Enemy chose {}.",
+      "You chose: {}, Enemy chose: {}.",
       player_moves.user_move.convert_to_string(),
       player_moves.enemy_move.convert_to_string(),
     );
+
     println!("Result: {}", round_winner.convert_to_string());
 
-    // Update scores
     match round_winner {
       Winner::User => scores.user_wins += 1,
       Winner::Enemy => scores.enemy_wins += 1,
@@ -151,13 +157,13 @@ fn main() {
     }
 
     println!(
-      "Current Scores -> You: {}, Enemy: {}",
+      "Current Scores -> User: {}, Enemy: {}",
       scores.user_wins, scores.enemy_wins
     );
   }
 
-  let winner = scores.check_for_winner(&game_settings).unwrap();
-  println!("Game over! {}", winner.convert_to_string());
+  let final_winner = scores.check_for_winner(&game_settings).unwrap();
+  println!("Game Over! {}", final_winner.convert_to_string());
 }
 ```
 
@@ -165,28 +171,29 @@ fn main() {
 
 ## Error Handling
 
-The library includes robust error handling:
+The library provides robust error management:
 
-### Key Error Scenarios
-- **Invalid User Input**:
-  - If the player enters invalid input (e.g., non-recognizable commands), the game reprompts using detailed error messages.
-- **Edge Cases**:
-  - Custom validations prevent unexpected behaviors in uninitialized or edge states.
+- **Invalid Input Handling**:
+  - Detects and reprompts users when invalid inputs (e.g., invalid string commands) are entered.
+
+- **Edge Case Management**:
+  - Ensures safe behavior in uninitialized or unexpected game states.
 
 ---
 
 ## Contributing
 
-We welcome contributions! To contribute:
+Do you have ideas, bug fixes, or improvements? Contributions are welcome! Here's how to get involved:
 
-1. Fork this repository.
-2. Create a new branch for your feature or bug fix.
-3. Push your changes and open a Pull Request.
+1. Fork the repository.
+2. Create a new branch for your feature.
+3. Commit and push your updates.
+4. Submit a Pull Request for review.
 
-For feature requests or issues, please open a GitHub issue.
+For issues and feature requests, please open a ticket on GitHub.
 
 ---
 
 ## License
 
-This project is distributed under the MIT License. See the `LICENSE` file for details.
+Distributed under the MIT License. See the `LICENSE` file for more information.
